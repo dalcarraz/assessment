@@ -1,0 +1,47 @@
+package com.cibertec.assessment.controller;
+
+import com.cibertec.assessment.model.Square;
+import com.cibertec.assessment.service.SquareService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/squares")
+public class SquareController {
+
+    @Autowired
+    private SquareService squareService;
+
+    @PostMapping
+    public ResponseEntity<Square> createSquare(@RequestBody Square square) {
+        Square createdSquare = squareService.create(square);
+        return new ResponseEntity<>(createdSquare, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/validateAndCreate")
+    public ResponseEntity<Square> validateAndCreateSquare(@RequestBody Square square) {
+        Square updatedSquare = squareService.validateAndCreateSquare(square);
+        return new ResponseEntity<>(updatedSquare, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Square>> getAllSquares() {
+        List<Square> squares = squareService.list();
+        return new ResponseEntity<>(squares, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Square> getSquareById(@PathVariable int id) {
+        Square square = squareService.getSquareById(id);
+
+        if (square != null) {
+            return new ResponseEntity<>(square, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}

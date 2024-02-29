@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="org.springframework.stereotype.Service"/>
+    <fullyQualifiedTypeName name="org.springframework.beans.factory.annotation.Autowired"/>
+    <fullyQualifiedTypeName name="com.cibertec.assessment.service.PolygonService"/>
+    <fullyQualifiedTypeName name="org.hibernate.mapping.List"/>
+    <fullyQualifiedTypeName name="lombok.Builder"/>
+    <fullyQualifiedTypeName name="org.springframework.validation.annotation.Validated"/>
+    <fullyQualifiedTypeName name="java.util.stream.Collectors"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="com.cibertec.assessment.model.Square"/>
+    <fullyQualifiedTypeName name="com.cibertec.assessment.repo.SquareRepo"/>
+    <fullyQualifiedTypeName name="java.awt.Point"/>
+    <fullyQualifiedTypeName name="org.hibernate.boot.jaxb.JaxbLogger_.logger"/>
+    <fullyQualifiedTypeName name="com.cibertec.assessment.model.Polygon"/>
+    <fullyQualifiedTypeName name="com.cibertec.assessment.beans.PolygonBean"/>
+    <fullyQualifiedTypeName name="java.util.Arrays"/>
+    <fullyQualifiedTypeName name="com.cibertec.assessment.service.SquareService"/>
+</qualifiedTypeNameHistroy>

@@ -1,0 +1,79 @@
+package com.cibertec.assessment.service.imp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cibertec.assessment.beans.PolygonBean;
+import com.cibertec.assessment.model.Square;
+import com.cibertec.assessment.repo.SquareRepo;
+import com.cibertec.assessment.service.PolygonService;
+import com.cibertec.assessment.service.SquareService;
+
+@Service
+public class SquareServiceImpl implements SquareService {
+
+    @Autowired
+    SquareRepo squareRepo;
+
+    @Autowired
+    PolygonService polygonService;
+
+    @Override
+    public Square create(Square square) {
+        Square createdSquare = squareRepo.save(square);
+
+        // Validar la intersección y actualizar los polígonos intersectados
+        validateAndSetIntersectingPolygons(createdSquare);
+
+        return createdSquare;
+    }
+
+    @Override
+    public List<Square> list() {
+        return squareRepo.findAll();
+    }
+
+    @Override
+    public void validateAndSetIntersectingPolygons(Square square) {
+        List<PolygonBean> allPolygons = polygonService.list();
+        List<Integer> intersectingPolygonIds = new ArrayList<>();
+
+        // Lógica para validar la intersección con cada polígono
+        for (PolygonBean polygon : allPolygons) {
+            if (IntersectionChecker.isSquareIntersectingPolygon(square, polygon)) {
+                intersectingPolygonIds.add(polygon.getId());
+            }
+        }
+
+        // Actualizar el campo polygons del cuadrado
+        square.setPolygons(convertListToFormattedString(intersectingPolygonIds));
+
+        // Guardar el cuadrado actualizado
+        squareRepo.save(square);
+    }
+
+    // Método para verificar la intersección de un cuadrado con un polígono
+    private boolean isSquareIntersectingPolygon(Square square, PolygonBean polygon) {
+        // Lógica para determinar si hay intersección
+        // Puedes implementar un algoritmo para verificar la intersección entre un cuadrado y un polígono
+        // Retornar true si hay intersección, false en caso contrario
+        return false;
+    }
+
+    // Método para convertir una lista de enteros a un string con formato de array
+    private String convertListToFormattedString(List<Integer> list) {
+        StringBuilder result = new StringBuilder("[");
+        for (int i = 0; i < list.size(); i++) {
+            result.append(list.get(i));
+            if (i < list.size() - 1) {
+                result.append(", ");
+            }
+        }
+        result.append("]");
+        return result.toString();
+    }
+}

@@ -1,0 +1,30 @@
+package com.cibertec.assessment;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.cibertec.assessment.model.Square;
+import com.cibertec.assessment.service.SquareService;
+
+import jakarta.annotation.PostConstruct;
+
+@Component
+public class DataLoaderSquare {
+
+    @Autowired
+    SquareService squareService;
+
+    @PostConstruct
+    public void initializeData() {
+        // Crear instancias de Square
+        Square square1 = new Square().builder().name("Square 01").xPoints("[10, 150, 150, 10]").yPoints("[10, 10, 150, 150]").build();
+        //Square square2 = new Square().builder().name("Square 02").xPoints("[100, 250, 250, 100]").yPoints("[100, 100, 250, 250]").build();
+
+        // Guardar cuadrados en la base de datos
+        squareService.create(square1);
+        //squareService.create(square2);
+
+        // Imprimir mensaje de confirmación
+        System.out.println("Data loaded for Square entities.");
+    }
+}

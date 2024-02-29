@@ -1,0 +1,14 @@
+package com.cibertec.assessment.service;
+
+import com.cibertec.assessment.model.Square;
+
+import java.util.List;
+
+public interface SquareService {
+
+    Square create(Square square);
+
+    List<Square> list();
+
+    List<Integer> validateAndCapturePolygons(String xPoints, String yPoints);
+}

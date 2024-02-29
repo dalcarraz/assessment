@@ -1,0 +1,64 @@
+package com.cibertec.assessment.service.imp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cibertec.assessment.model.Square;
+import com.cibertec.assessment.repo.SquareRepo;
+import com.cibertec.assessment.service.PolygonService;
+import com.cibertec.assessment.service.SquareService;
+import org.springframework.transaction.annotation.Transactional;
+
+
+@Service
+public class SquareServiceImpl implements SquareService{
+
+	@Autowired 
+	SquareRepo squareRepo;
+	
+	@Autowired
+	PolygonService polygonService;
+	
+
+	@Override
+    public Square create(Square square) {
+        return squareRepo.save(square);
+    }
+
+    @Override
+    public List<Square> list() {
+        return squareRepo.findAll();
+    }
+    
+    
+    @Override
+    @Transactional
+    public void validateAndCreateSquare(Square square) {
+        List<String> intersectedPolygons = findIntersectedPolygons(square);
+        square.setPolygons(intersectedPolygons.toString()); // Guarda los IDs de polígonos como string en formato de array
+        squareRepo.save(square);
+    }
+
+    private List<String> findIntersectedPolygons(Square square) {
+        // Implementa la lógica de intersección aquí
+        // Usa polygonService.list() para obtener todos los polígonos y realiza la lógica de intersección
+        // Devuelve los IDs de los polígonos que hacen match
+        // Nota: Necesitarás implementar esta lógica según tus requisitos específicos
+        // Puedes utilizar bibliotecas como JTS Topology Suite para lidiar con operaciones espaciales si es necesario
+        return new ArrayList<>(); // Cambia esto con la lógica real
+    }
+
+	@Override
+	public Square getSquareById(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
+	
+	
+}

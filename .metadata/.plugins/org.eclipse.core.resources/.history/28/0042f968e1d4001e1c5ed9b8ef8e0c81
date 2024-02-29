@@ -1,0 +1,36 @@
+package com.cibertec.assessment.controller;
+
+import com.cibertec.assessment.beans.PolygonBean;
+import com.cibertec.assessment.model.Polygon;
+import com.cibertec.assessment.service.PolygonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/polygons")
+public class PolygonController {
+
+    @Autowired
+    private PolygonService polygonService;
+
+    @PostMapping
+    public ResponseEntity<String> createPolygon(@RequestBody Polygon polygon) {
+        polygonService.create(polygon);
+        return ResponseEntity.ok("Polygon created successfully");
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<String> createPolygons(@RequestBody List<Polygon> polygons) {
+        polygonService.create(polygons);
+        return ResponseEntity.ok("Polygons created successfully");
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PolygonBean>> listPolygons() {
+        List<PolygonBean> polygonBeans = polygonService.list();
+        return ResponseEntity.ok(polygonBeans);
+    }
+}

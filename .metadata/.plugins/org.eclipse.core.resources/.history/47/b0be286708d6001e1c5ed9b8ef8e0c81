@@ -1,0 +1,159 @@
+package com.cibertec.assessment.service.imp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cibertec.assessment.beans.PolygonBean;
+import com.cibertec.assessment.model.Square;
+import com.cibertec.assessment.repo.SquareRepo;
+import com.cibertec.assessment.service.PolygonService;
+import com.cibertec.assessment.service.SquareService;
+import org.springframework.transaction.annotation.Transactional;
+
+
+@Service
+public class SquareServiceImpl implements SquareService{
+
+	@Autowired 
+	SquareRepo squareRepo;
+	
+	@Autowired
+	PolygonService polygonService;
+	
+
+	@Override
+    public Square create(Square square) {
+        return squareRepo.save(square);
+    
+    }
+
+	
+	
+    @Override
+    public List<Square> list() {
+        return squareRepo.findAll();
+    }
+    
+    
+    @Override
+    @Transactional
+    public void validateAndCreateSquare(Square square) {
+        List<String> intersectedPolygons = findIntersectedPolygons(square);
+        square.setPolygons(intersectedPolygons.toString()); // Guarda los IDs de polígonos como string en formato de array
+        squareRepo.save(square);
+        
+     // Aquí se realiza la validación si el cuadrado se encuentra dentro de algún polígono
+        List<String> intersectedPolygonIds = findIntersectedPolygonIds(square);
+
+        // Se guarda el resultado como un string con formato de array
+        square.setPolygons(convertToFormattedArray(intersectedPolygonIds));
+    }
+
+    private List<String> findIntersectedPolygons(Square square) {
+        // Implementa la lógica de intersección aquí
+        // Usa polygonService.list() para obtener todos los polígonos y realiza la lógica de intersección
+        // Devuelve los IDs de los polígonos que hacen match
+        // Nota: Necesitarás implementar esta lógica según tus requisitos específicos
+        // Puedes utilizar bibliotecas como JTS Topology Suite para lidiar con operaciones espaciales si es necesario
+        return new ArrayList<>(); // Cambia esto con la lógica real
+    }
+
+	@Override
+	public Square getSquareById(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	// Método para encontrar los IDs de los polígonos que intersectan con el cuadrado
+    private List<String> findIntersectedPolygonIds(Square s) {
+        List<String> intersectedPolygonIds = new ArrayList<>();
+        
+        // Obtener la lista de polígonos existentes
+        List<PolygonBean> polygons = polygonService.list();
+        
+        // Verificar si algún punto del cuadrado está dentro de algún polígono
+        for (PolygonBean polygon : polygons) {
+            // Implementa la lógica para verificar si el cuadrado está dentro del polígono
+            if (isSquareInsidePolygon(s, polygon)) {
+                intersectedPolygonIds.add(polygon.getId().toString());
+            }
+        }
+        return intersectedPolygonIds;
+    }
+
+    private boolean isSquareInsidePolygon(Square s, PolygonBean polygon) {
+        int numIntersections = 0;
+        Integer[] xPoints = polygon.getXPoints();
+        Integer[] yPoints = polygon.getYPoints();
+        
+        // Obtener las coordenadas del cuadrado
+        double x = Double.parseDouble(s.getXPoints()); // Coordenada x del punto superior izquierdo del cuadrado
+        double y = Double.parseDouble(s.getYPoints()); // Coordenada y del punto superior izquierdo del cuadrado
+        
+        // Iterar sobre los lados del polígono
+        for (int i = 0, j = xPoints.length - 1; i < xPoints.length; j = i++) {
+            double xi = xPoints[i];
+            double yi = yPoints[i];
+            double xj = xPoints[j];
+            double yj = yPoints[j];
+
+         // Iterar sobre los lados del cuadrado
+            for (int k = 0, l = xPoints.length - 1; k < xPoints.length; k++, l--) {
+                double xk = xPoints[k].doubleValue();
+                double yk = yPoints[k].doubleValue();
+                double xl = xPoints[l].doubleValue();
+                double yl = yPoints[l].doubleValue();
+
+                // Comprobar si hay intersección entre los lados del polígono y los del cuadrado
+                if (doIntersect(xi, yi, xj, yj, xk, yk, xl, yl)) {
+                    numIntersections++;
+                }
+            }
+        }
+
+        // Si el número de intersecciones es impar, el cuadrado está dentro del polígono
+        return numIntersections % 2 != 0;
+    }
+
+    // Método para comprobar si dos segmentos de línea se intersectan
+    private boolean doIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+        double o1 = orientation(x1, y1, x2, y2, x3, y3);
+        double o2 = orientation(x1, y1, x2, y2, x4, y4);
+        double o3 = orientation(x3, y3, x4, y4, x1, y1);
+        double o4 = orientation(x3, y3, x4, y4, x2, y2);
+
+        if (o1 != o2 && o3 != o4) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Método para obtener la orientación de tres puntos (p, q, r)
+    private double orientation(double x1, double y1, double x2, double y2, double x3, double y3) {
+        double val = (y2 - y1) * (x3 - x2) - (x2 - x1) * (y3 - y2);
+        if (val == 0) {
+            return 0;  // Colineales
+        }
+        return (val > 0) ? 1 : 2; // En sentido horario o antihorario
+    }
+
+    // Método para convertir una lista de IDs en un string con formato de array
+    private String convertToFormattedArray(List<String> ids) {
+        StringBuilder formattedArray = new StringBuilder("[");
+        for (int i = 0; i < ids.size(); i++) {
+            formattedArray.append("\"").append(ids.get(i)).append("\"");
+            if (i < ids.size() - 1) {
+                formattedArray.append(",");
+            }
+        }
+        formattedArray.append("]");
+        return formattedArray.toString();
+    }
+}
+	
+	

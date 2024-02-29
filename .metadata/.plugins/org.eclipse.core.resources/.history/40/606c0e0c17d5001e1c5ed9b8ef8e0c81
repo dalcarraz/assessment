@@ -1,0 +1,56 @@
+package com.cibertec.assessment.controller;
+
+import com.cibertec.assessment.beans.PolygonBean;
+import com.cibertec.assessment.model.Polygon;
+import com.cibertec.assessment.service.PolygonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/polygons")
+public class PolygonController {
+
+    @Autowired
+    private PolygonService polygonService;
+
+    @PostMapping
+    public ResponseEntity<String> createPolygon(@RequestBody Polygon polygon) {
+        // Imprime los valores antes de llamar al servicio
+        System.out.println("Received Polygon:");
+        System.out.println("Name: " + polygon.getName());
+        System.out.println("Npoints: " + polygon.getNpoints());
+        System.out.println("xPoints: " + polygon.getXPoints());
+        System.out.println("yPoints: " + polygon.getYPoints());
+
+        // Llama al servicio para crear el polígono
+        polygonService.create(polygon);
+
+        return ResponseEntity.ok("Polígono creado exitosamente");
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<String> createPolygons(@RequestBody List<Polygon> polygons) {
+        // Imprime los valores antes de llamar al servicio
+        System.out.println("Received Batch of Polygons:");
+        polygons.forEach(polygon -> {
+            System.out.println("Name: " + polygon.getName());
+            System.out.println("Npoints: " + polygon.getNpoints());
+            System.out.println("xPoints: " + polygon.getXPoints());
+            System.out.println("yPoints: " + polygon.getYPoints());
+        });
+
+        // Llama al servicio para crear los polígonos
+        polygonService.create(polygons);
+
+        return ResponseEntity.ok("Polígonos creados exitosamente");
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PolygonBean>> listPolygons() {
+        List<PolygonBean> polygonBeans = polygonService.list();
+        return ResponseEntity.ok(polygonBeans);
+    }
+}

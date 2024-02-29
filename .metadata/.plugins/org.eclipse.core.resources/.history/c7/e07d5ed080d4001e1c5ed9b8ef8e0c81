@@ -1,0 +1,37 @@
+package com.cibertec.assessment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import com.cibertec.assessment.model.Square;
+import com.cibertec.assessment.service.SquareService;
+import jakarta.annotation.PostConstruct;
+
+@Component
+public class DataLoaderSquare {
+
+    @Autowired
+    private SquareService squareService;
+
+    @PostConstruct
+    public void initializeData() {
+        List<Square> list = new ArrayList<>();
+
+        String[] xPoints1 = { "10", "150", "150", "10" };
+        String[] yPoints1 = { "10", "10", "150", "150" };
+
+        String[] xPoints2 = { "100", "250", "250", "100" };
+        String[] yPoints2 = { "100", "100", "250", "250" };
+
+        Square square1 = new Square().builder().name("Square 01").xPoints(Arrays.toString(xPoints1))
+                .yPoints(Arrays.toString(yPoints1)).polygons("Poligon 01").build();
+        Square square2 = new Square().builder().name("Square 02").xPoints(Arrays.toString(xPoints2))
+                .yPoints(Arrays.toString(yPoints2)).polygons("Poligon 02").build();
+        list.add(square1);
+        list.add(square2);
+
+        squareService.create(list);
+    }
+}

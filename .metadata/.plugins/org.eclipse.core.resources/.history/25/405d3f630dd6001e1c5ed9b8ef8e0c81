@@ -1,0 +1,86 @@
+package com.cibertec.assessment.service.imp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cibertec.assessment.beans.PolygonBean;
+import com.cibertec.assessment.model.Square;
+import com.cibertec.assessment.repo.SquareRepo;
+import com.cibertec.assessment.service.PolygonService;
+import com.cibertec.assessment.service.SquareService;
+
+@Service
+public class SquareServiceImpl implements SquareService {
+
+    @Autowired
+    SquareRepo squareRepo;
+
+    @Autowired
+    PolygonService polygonService;
+
+    @Override
+    public Square create(Square square) {
+        return squareRepo.save(square);
+    }
+
+    @Override
+    public List<Square> list() {
+        return squareRepo.findAll();
+    }
+
+    @Override
+    @Transactional
+    public void validateAndCreateSquare(Square square) {
+        List<String> intersectedPolygons = findIntersectedPolygons(square);
+        square.setPolygons(convertToFormattedArray(intersectedPolygons));
+        squareRepo.save(square);
+    }
+
+    private List<String> findIntersectedPolygons(Square square) {
+        List<String> intersectedPolygonIds = new ArrayList<>();
+
+        // Obtén la lista de polígonos existentes
+        List<PolygonBean> polygons = polygonService.list();
+
+        // Implementa la lógica de intersección aquí
+        // Puedes usar bibliotecas como JTS Topology Suite para operaciones espaciales
+
+        for (PolygonBean polygon : polygons) {
+            if (isSquareInsidePolygon(square, polygon)) {
+                intersectedPolygonIds.add(polygon.getId().toString());
+            }
+        }
+
+        return intersectedPolygonIds;
+    }
+
+    // Implementa la lógica específica para verificar si un cuadrado está dentro de un polígono
+    private boolean isSquareInsidePolygon(Square square, PolygonBean polygon) {
+        // Implementa la lógica aquí
+        // Puedes utilizar algoritmos de intersección de polígonos
+
+        return false; // Cambia esto con la lógica real
+    }
+
+    private String convertToFormattedArray(List<String> ids) {
+        StringBuilder formattedArray = new StringBuilder("[");
+        for (int i = 0; i < ids.size(); i++) {
+            formattedArray.append("\"").append(ids.get(i)).append("\"");
+            if (i < ids.size() - 1) {
+                formattedArray.append(",");
+            }
+        }
+        formattedArray.append("]");
+        return formattedArray.toString();
+    }
+
+    @Override
+    public Square getSquareById(int id) {
+        // TODO: Implementar la lógica para obtener un cuadrado por ID desde el repositorio
+        return null;
+    }
+}

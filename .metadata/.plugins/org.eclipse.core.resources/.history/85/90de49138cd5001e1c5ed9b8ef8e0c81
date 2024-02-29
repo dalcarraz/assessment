@@ -1,0 +1,14 @@
+package com.cibertec.assessment.service;
+
+import java.util.List;
+
+public interface PolygonService {
+
+    void create(Polygon p);
+
+    void create(List<Polygon> lp);
+
+    List<PolygonBean> list();
+
+    List<Integer> findIntersectedPolygons(String xPoints, String yPoints);
+}

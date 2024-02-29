@@ -1,0 +1,43 @@
+package com.cibertec.assessment.util;
+
+import com.cibertec.assessment.beans.PolygonBean;
+import com.cibertec.assessment.model.Square;
+
+public class IntersectionChecker {
+
+    // Método para verificar la intersección entre un cuadrado y un polígono
+    public static boolean isSquareIntersectingPolygon(Square square, PolygonBean polygon) {
+        // Obtener los puntos del cuadrado
+        int[] squareXPoints = parseArrayString(square.getXPoints());
+        int[] squareYPoints = parseArrayString(square.getYPoints());
+
+        // Obtener los puntos del polígono
+        Integer[] polygonXPoints = polygon.getXPoints();
+        Integer[] polygonYPoints = polygon.getYPoints();
+
+        // Verificar la intersección utilizando el algoritmo de Ray-Casting
+        for (int i = 0, j = polygonXPoints.length - 1; i < polygonXPoints.length; j = i++) {
+            if ((polygonYPoints[i] > squareYPoints[0]) != (polygonYPoints[j] > squareYPoints[0]) &&
+                    (squareXPoints[0] < (polygonXPoints[j] - polygonXPoints[i]) * (squareYPoints[0] - polygonYPoints[i]) / (polygonYPoints[j] - polygonYPoints[i]) + polygonXPoints[i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Método para convertir una cadena con formato de array a un arreglo de enteros
+    private static int[] parseArrayString(String arrayString) {
+        if (arrayString == null) {
+            // Manejar el caso cuando arrayString es nulo
+            return new int[0]; // O puedes lanzar una excepción o manejarlo de otra manera según tus necesidades.
+        }
+
+        String[] parts = arrayString.substring(1, arrayString.length() - 1).split(", ");
+        int[] result = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            result[i] = Integer.parseInt(parts[i]);
+        }
+        return result;
+    }
+}

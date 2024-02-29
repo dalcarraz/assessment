@@ -1,0 +1,48 @@
+package com.cibertec.assessment.controller;
+
+import com.cibertec.assessment.model.Square;
+import com.cibertec.assessment.service.SquareService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+//Supongamos que tienes un controlador que recibe solicitudes para crear cuadrados
+@RestController
+@RequestMapping("/api/squares")
+public class SquareController {
+
+ @Autowired
+ private SquareService squareService;
+
+ @PostMapping("/createAndValidate")
+ public ResponseEntity<Square> createAndValidateSquare(@RequestBody Square square) {
+     // Llama al servicio para validar y crear el cuadrado
+     squareService.validateAndCreateSquare(square);
+     return new ResponseEntity<>(square, HttpStatus.CREATED);
+ }
+
+ @GetMapping
+ public ResponseEntity<List<Square>> getAllSquares() {
+     // Llama al servicio para obtener todos los cuadrados
+     List<Square> squares = squareService.list();
+     return new ResponseEntity<>(squares, HttpStatus.OK);
+ }
+
+ // Otros endpoints según sea necesario
+}
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Square> getSquareById(@PathVariable int id) {
+        Square square = squareService.getSquareById(id);
+
+        if (square != null) {
+            return new ResponseEntity<>(square, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
